@@ -16,6 +16,7 @@ function FollowButton({ userId }: { userId: string }) {
       await toggleFollow(userId);
       toast.success("User followed successfully");
     } catch (error) {
+      console.error("Error following user:", error); // Log the error
       toast.error("Error following user");
     } finally {
       setIsLoading(false);
@@ -34,4 +35,5 @@ function FollowButton({ userId }: { userId: string }) {
     </Button>
   );
 }
+
 export default FollowButton;

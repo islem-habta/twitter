@@ -24,6 +24,7 @@ export async function POST(request: Request) {
     if (!body.title) {
       return Response.json({ error: "Title is required" }, { status: 400 });
     }
+
     const newTask: Task = {
       id: tasks.length + 1,
       title: body.title,
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     tasks.push(newTask);
     return Response.json(newTask, { status: 201 });
   } catch (error) {
+    console.error("Error creating task:", error); // Log the error
     return Response.json({ error: "Invalid request body" }, { status: 400 });
   }
 }
@@ -54,6 +56,7 @@ export async function DELETE(request: Request) {
     tasks = tasks.filter((task) => task.id !== id);
     return Response.json({ message: "Task deleted" });
   } catch (error) {
+    console.error("Error deleting task:", error); // Log the error
     return Response.json({ error: "Invalid request" }, { status: 400 });
   }
 }

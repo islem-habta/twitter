@@ -21,6 +21,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
+        console.log("Upload complete for user:", metadata.userId); // Use the `metadata` variable
         return { fileUrl: file.url };
       } catch (error) {
         console.error("Error in onUploadComplete:", error);
