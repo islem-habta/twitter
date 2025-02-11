@@ -6,8 +6,11 @@ import {
 } from "@/actions/profile.action";
 import { notFound } from "next/navigation";
 import ProfilePageClient from "./ProfilePageClient";
+import Image from "next/image"; // Import the Image component
 
-export async function generateMetadata({ params }: { params: { username: string } }) {
+export async function generateMetadata({ params }: { params?: { username?: string } }) {
+  if (!params?.username) return; // ✅ Ensure params exist
+
   const user = await getProfileByUsername(params.username);
   if (!user) return;
 
@@ -17,11 +20,13 @@ export async function generateMetadata({ params }: { params: { username: string 
   };
 }
 
-async function ProfilePageServer({ params }: { params: { username: string } }) {
-  const user = await getProfileByUsername(params.username);
+async function ProfilePageServer({ params }: { params?: { username?: string } }) {
+  if (!params?.username) notFound(); // ✅ Ensure params exist before using
 
+  const user = await getProfileByUsername(params.username);
   if (!user) notFound();
 
+  // ✅ Use Promise.all to fetch data efficiently
   const [posts, likedPosts, isCurrentUserFollowing] = await Promise.all([
     getUserPosts(user.id),
     getUserLikedPosts(user.id),
@@ -37,4 +42,5 @@ async function ProfilePageServer({ params }: { params: { username: string } }) {
     />
   );
 }
+
 export default ProfilePageServer;

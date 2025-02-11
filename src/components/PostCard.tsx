@@ -36,6 +36,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
       await toggleLike(post.id);
     } catch (error) {
       console.error("Error toggling like:", error); // Log the error
+      toast.error("Failed to toggle like"); // Notify the user
       setOptmisticLikes(post._count.likes);
       setHasLiked(post.likes.some((like) => like.userId === dbUserId));
     } finally {
@@ -54,7 +55,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
       }
     } catch (error) {
       console.error("Error adding comment:", error); // Log the error
-      toast.error("Failed to add comment");
+      toast.error("Failed to add comment"); // Notify the user
     } finally {
       setIsCommenting(false);
     }
@@ -69,7 +70,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
       else throw new Error(result.error);
     } catch (error) {
       console.error("Error deleting post:", error); // Log the error
-      toast.error("Failed to delete post");
+      toast.error("Failed to delete post"); // Notify the user
     } finally {
       setIsDeleting(false);
     }
@@ -114,7 +115,13 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
           {/* POST IMAGE */}
           {post.image && (
             <div className="rounded-lg overflow-hidden">
-              <Image src={post.image} alt="Post content" className="w-full h-auto object-cover" />
+              <Image
+                src={post.image}
+                alt="Post content"
+                width={600}
+                height={400}
+                className="w-full h-auto object-cover"
+              />
             </div>
           )}
 
@@ -170,8 +177,7 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <span className="font-medium text-sm">{comment.author.name}
-                        </span>
+                        <span className="font-medium text-sm">{comment.author.name}</span>
                         <span className="text-sm text-muted-foreground">
                           @{comment.author.username}
                         </span>
@@ -234,4 +240,5 @@ function PostCard({ post, dbUserId }: { post: Post; dbUserId: string | null }) {
     </Card>
   );
 }
+
 export default PostCard;
