@@ -14,7 +14,10 @@ let tasks: Task[] = [
 ];
 
 export async function GET() {
-  return Response.json(tasks);
+  return new Response(JSON.stringify(tasks), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 export async function POST(request: Request) {
@@ -22,41 +25,62 @@ export async function POST(request: Request) {
     const body: CreateTaskRequest = await request.json();
 
     if (!body.title) {
-      return Response.json({ error: "Title is required" }, { status: 400 });
+      return new Response(JSON.stringify({ error: "Title is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const newTask: Task = {
-      id: tasks.length + 1,
+      id: tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1, // Ensure unique ID
       title: body.title,
       completed: false,
     };
 
     tasks.push(newTask);
-    return Response.json(newTask, { status: 201 });
+    return new Response(JSON.stringify(newTask), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("Error creating task:", error); // Log the error
-    return Response.json({ error: "Invalid request body" }, { status: 400 });
+    console.error("Error creating task:", error);
+    return new Response(JSON.stringify({ error: "Invalid request body" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
 
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = parseInt(searchParams.get("id") || "");
+    const id = searchParams.get("id");
 
-    if (!id) {
-      return Response.json({ error: "Task ID is required" }, { status: 400 });
+    if (!id || isNaN(Number(id))) {
+      return new Response(JSON.stringify({ error: "Valid Task ID is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    const taskIndex = tasks.findIndex((task) => task.id === id);
+    const taskIndex = tasks.findIndex((task) => task.id === Number(id));
     if (taskIndex === -1) {
-      return Response.json({ error: "Task not found" }, { status: 404 });
+      return new Response(JSON.stringify({ error: "Task not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    tasks = tasks.filter((task) => task.id !== id);
-    return Response.json({ message: "Task deleted" });
+    tasks = tasks.filter((task) => task.id !== Number(id));
+    return new Response(JSON.stringify({ message: "Task deleted" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    console.error("Error deleting task:", error); // Log the error
-    return Response.json({ error: "Invalid request" }, { status: 400 });
+    console.error("Error deleting task:", error);
+    return new Response(JSON.stringify({ error: "Invalid request" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
