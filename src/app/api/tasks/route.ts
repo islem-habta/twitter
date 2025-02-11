@@ -23,7 +23,6 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body: CreateTaskRequest = await request.json();
-
     if (!body.title) {
       return new Response(JSON.stringify({ error: "Title is required" }), {
         status: 400,
@@ -32,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     const newTask: Task = {
-      id: tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1, // Ensure unique ID
+      id: tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1,
       title: body.title,
       completed: false,
     };
@@ -54,16 +53,16 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
+    const id = Number(searchParams.get("id"));
 
-    if (!id || isNaN(Number(id))) {
+    if (!id || isNaN(id)) {
       return new Response(JSON.stringify({ error: "Valid Task ID is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    const taskIndex = tasks.findIndex((task) => task.id === Number(id));
+    const taskIndex = tasks.findIndex((task) => task.id === id);
     if (taskIndex === -1) {
       return new Response(JSON.stringify({ error: "Task not found" }), {
         status: 404,
@@ -71,7 +70,7 @@ export async function DELETE(request: Request) {
       });
     }
 
-    tasks = tasks.filter((task) => task.id !== Number(id));
+    tasks = tasks.filter((task) => task.id !== id);
     return new Response(JSON.stringify({ message: "Task deleted" }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
