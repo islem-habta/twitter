@@ -1,0 +1,11 @@
+{
+    "build": {
+      "env": {
+        "DATABASE_URL": "@your_database_env_var"
+      }
+    },
+    "scripts": {
+      "build": "prisma generate && next build"
+    }
+  }
+  
