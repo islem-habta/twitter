@@ -1,11 +1,12 @@
 {
-    "build": {
-      "env": {
-        "DATABASE_URL": "@your_database_env_var"
-      }
-    },
-    "scripts": {
-      "build": "prisma generate && next build"
+  "buildCommand": "prisma generate && next build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
     }
   }
+}
   
